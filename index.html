@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Open Trendit App</title>
+	</head>
+	<body>
+		<script>
+			const userAgent = navigator.userAgent || navigator.vendor || window.opera
+
+			// Define the fallback URLs for app stores
+			const appStoreURL =
+				'https://apps.apple.com/us/app/trendit/com.trendit3.app'
+			const playStoreURL =
+				'https://play.google.com/store/apps/details?id=com.trendit3.app'
+
+			// Define the deep link
+			const deepLink = 'trendit3://'
+
+			// Attempt to open the deep link
+			window.location.href = deepLink
+
+			// Redirect to App Store or Play Store after a delay if the app isn't installed
+			setTimeout(() => {
+				if (/iPhone|iPad|iPod/.test(userAgent)) {
+					alert('App not available on Apple Store yet, Check back soon! 😣')
+					// window.location.href = appStoreURL // iOS fallback
+				} else if (/Android/.test(userAgent)) {
+					window.location.href = playStoreURL // Android fallback
+				} else {
+					alert('App not available for your platform!')
+				}
+			}, 1500)
+		</script>
+	</body>
+</html>
