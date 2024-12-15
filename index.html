@@ -35,22 +35,6 @@
 				color: #777;
 			}
 
-			.button {
-				margin-top: 20px;
-				padding: 10px 20px;
-				font-size: 1rem;
-				color: #fff;
-				background-color: #007bff;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				text-decoration: none;
-			}
-
-			.button:hover {
-				background-color: #0056b3;
-			}
-
 			footer {
 				position: absolute;
 				bottom: 20px;
@@ -70,7 +54,7 @@
 		<script>
 			const userAgent = navigator.userAgent || navigator.vendor || window.opera
 
-			// Define the fallback URLs for app stores
+			// Define fallback URLs for app stores
 			const appStoreURL =
 				'https://apps.apple.com/us/app/trendit/com.trendit3.app'
 			const playStoreURL =
@@ -79,26 +63,38 @@
 			// Define the deep link
 			const deepLink = 'trendit3://'
 
-			// Attempt to open the deep link
-			window.location.href = deepLink
-
-			// Redirect to App Store or Play Store after a delay if the app isn't installed
-			setTimeout(() => {
+			function openApp() {
 				const loadingText = document.querySelector('.loading')
-				if (/iPhone|iPad|iPod/.test(userAgent)) {
-					loadingText.textContent =
-						'App not available on the Apple Store yet. Check back soon! 😣'
-					// Uncomment below when the app is ready on the App Store
-					// window.location.href = appStoreURL;
-				} else if (/Android/.test(userAgent)) {
-					loadingText.textContent =
-						'Redirecting you to the Google Play Store...'
-					window.location.href = playStoreURL
-				} else {
-					loadingText.textContent =
-						'Oops! The Trendit app is not available for your platform.'
-				}
-			}, 1500)
+
+				// Set a timer to detect if the app was opened successfully
+				const timeout = setTimeout(() => {
+					// If the timer fires, it means the app wasn't opened
+					if (/iPhone|iPad|iPod/.test(userAgent)) {
+						loadingText.textContent = 'Redirecting to the App Store...'
+						window.location.href = appStoreURL // Redirect to the App Store
+					} else if (/Android/.test(userAgent)) {
+						loadingText.textContent = 'Redirecting to the Google Play Store...'
+						window.location.href = playStoreURL // Redirect to the Play Store
+					} else {
+						loadingText.textContent =
+							'Oops! The Trendit app is not available for your platform.'
+					}
+				}, 1500)
+
+				// Try to open the app
+				window.location.href = deepLink
+
+				// Clear the timeout if the app opens (user leaves the page)
+				window.addEventListener('visibilitychange', () => {
+					if (document.visibilityState === 'hidden') {
+						clearTimeout(timeout)
+						loadingText.textContent = 'App opened successfully!'
+					}
+				})
+			}
+
+			// Run the function on page load
+			openApp()
 		</script>
 
 		<footer>&copy; 2024 Trendit. All rights reserved.</footer>
