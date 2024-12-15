@@ -35,6 +35,22 @@
 				color: #777;
 			}
 
+			.button {
+				margin-top: 20px;
+				padding: 10px 20px;
+				font-size: 1rem;
+				color: #fff;
+				background-color: #007bff;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				text-decoration: none;
+			}
+
+			.button:hover {
+				background-color: #0056b3;
+			}
+
 			footer {
 				position: absolute;
 				bottom: 20px;
@@ -63,50 +79,26 @@
 			// Define the deep link
 			const deepLink = 'trendit3://'
 
-			// Create a function to open the app or fallback
-			function openApp() {
+			// Attempt to open the deep link
+			window.location.href = deepLink
+
+			// Redirect to App Store or Play Store after a delay if the app isn't installed
+			setTimeout(() => {
 				const loadingText = document.querySelector('.loading')
-				const start = Date.now()
-				let redirected = false
-
-				// Try opening the app using an iframe
-				const iframe = document.createElement('iframe')
-				iframe.style.display = 'none'
-				iframe.src = deepLink
-				document.body.appendChild(iframe)
-
-				// Set a timeout to check if the app was opened
-				setTimeout(() => {
-					const elapsed = Date.now() - start
-
-					// If the user hasn't been redirected within the timeout period
-					if (!redirected && elapsed < 1500) {
-						if (/iPhone|iPad|iPod/.test(userAgent)) {
-							// iOS fallback
-							loadingText.textContent = 'Redirecting to the App Store...'
-							window.location.href = appStoreURL
-						} else if (/Android/.test(userAgent)) {
-							// Android fallback
-							loadingText.textContent =
-								'Redirecting to the Google Play Store...'
-							window.location.href = playStoreURL
-						} else {
-							// Unsupported platform
-							loadingText.textContent =
-								'Oops! The Trendit app is not available for your platform.'
-						}
-					}
-				}, 1500)
-
-				// Add a blur/focus detection listener
-				window.addEventListener('blur', () => {
-					redirected = true // User has switched apps (likely successful deep link)
-					loadingText.textContent = 'App opened successfully!'
-				})
-			}
-
-			// Run the function on page load
-			openApp()
+				if (/iPhone|iPad|iPod/.test(userAgent)) {
+					loadingText.textContent =
+						'App not available on the Apple Store yet. Check back soon! 😣'
+					// Uncomment below when the app is ready on the App Store
+					// window.location.href = appStoreURL;
+				} else if (/Android/.test(userAgent)) {
+					loadingText.textContent =
+						'Redirecting you to the Google Play Store...'
+					window.location.href = playStoreURL
+				} else {
+					loadingText.textContent =
+						'Oops! The Trendit app is not available for your platform.'
+				}
+			}, 1500)
 		</script>
 
 		<footer>&copy; 2024 Trendit. All rights reserved.</footer>
