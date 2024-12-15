@@ -105,9 +105,9 @@
 				let deepLink = 'trendit3://'
 
 				if (queryParams.reseller_id) {
-					deepLink += `marketDetails?id=${queryParams.reseller_id}`
+					deepLink += `market/marketDetails?id=${queryParams.reseller_id}`
 				} else if (queryParams.referral) {
-					deepLink += `referral?id=${queryParams.referral}`
+					deepLink += `referandEarn?id=${queryParams.referral}`
 				} else {
 					deepLink += '/'
 				}
