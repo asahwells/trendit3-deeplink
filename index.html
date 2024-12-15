@@ -90,8 +90,33 @@
 			const playStoreURL =
 				'https://play.google.com/store/apps/details?id=com.trendit3.app'
 
+			function getQueryParams() {
+				const params = new URLSearchParams(window.location.search)
+				const queryParams = {}
+				for (const [key, value] of params.entries()) {
+					queryParams[key] = value
+				}
+				return queryParams
+			}
+
+			// Function to construct the deep link URL
+			function constructDeepLink() {
+				const queryParams = getQueryParams()
+				let deepLink = 'trendit3://'
+
+				if (queryParams.reseller_id) {
+					deepLink += `marketDetails?id=${queryParams.reseller_id}`
+				} else if (queryParams.referral) {
+					deepLink += `referral?id=${queryParams.referral}`
+				} else {
+					deepLink += '/'
+				}
+
+				return deepLink
+			}
+
 			// Define the deep link
-			const deepLink = 'trendit3://'
+			const deepLink = constructDeepLink()
 
 			function openApp() {
 				const loadingText = document.querySelector('.loading')
