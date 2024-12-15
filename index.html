@@ -1,9 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Open Trendit App</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				text-align: center;
+				background-color: #f9f9f9;
+				color: #333;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
+
+			h1 {
+				font-size: 2rem;
+				color: #ff4500; /* Trendit brand color */
+			}
+
+			p {
+				font-size: 1rem;
+				margin: 10px 20px;
+			}
+
+			.loading {
+				margin-top: 20px;
+				font-size: 0.9rem;
+				color: #777;
+			}
+
+			footer {
+				position: absolute;
+				bottom: 20px;
+				font-size: 0.8rem;
+				color: #aaa;
+			}
+		</style>
 	</head>
 	<body>
+		<h1>Welcome to Trendit!</h1>
+		<p>
+			We’re opening the Trendit app for you. If you don’t have it installed,
+			we’ll help you get started!
+		</p>
+		<p class="loading">Redirecting...</p>
+
 		<script>
 			const userAgent = navigator.userAgent || navigator.vendor || window.opera
 
@@ -16,20 +63,52 @@
 			// Define the deep link
 			const deepLink = 'trendit3://'
 
-			// Attempt to open the deep link
-			window.location.href = deepLink
+			// Create a function to open the app or fallback
+			function openApp() {
+				const loadingText = document.querySelector('.loading')
+				const start = Date.now()
+				let redirected = false
 
-			// Redirect to App Store or Play Store after a delay if the app isn't installed
-			setTimeout(() => {
-				if (/iPhone|iPad|iPod/.test(userAgent)) {
-					alert('App not available on Apple Store yet, Check back soon! 😣')
-					// window.location.href = appStoreURL // iOS fallback
-				} else if (/Android/.test(userAgent)) {
-					window.location.href = playStoreURL // Android fallback
-				} else {
-					alert('App not available for your platform!')
-				}
-			}, 1500)
+				// Try opening the app using an iframe
+				const iframe = document.createElement('iframe')
+				iframe.style.display = 'none'
+				iframe.src = deepLink
+				document.body.appendChild(iframe)
+
+				// Set a timeout to check if the app was opened
+				setTimeout(() => {
+					const elapsed = Date.now() - start
+
+					// If the user hasn't been redirected within the timeout period
+					if (!redirected && elapsed < 1500) {
+						if (/iPhone|iPad|iPod/.test(userAgent)) {
+							// iOS fallback
+							loadingText.textContent = 'Redirecting to the App Store...'
+							window.location.href = appStoreURL
+						} else if (/Android/.test(userAgent)) {
+							// Android fallback
+							loadingText.textContent =
+								'Redirecting to the Google Play Store...'
+							window.location.href = playStoreURL
+						} else {
+							// Unsupported platform
+							loadingText.textContent =
+								'Oops! The Trendit app is not available for your platform.'
+						}
+					}
+				}, 1500)
+
+				// Add a blur/focus detection listener
+				window.addEventListener('blur', () => {
+					redirected = true // User has switched apps (likely successful deep link)
+					loadingText.textContent = 'App opened successfully!'
+				})
+			}
+
+			// Run the function on page load
+			openApp()
 		</script>
+
+		<footer>&copy; 2024 Trendit. All rights reserved.</footer>
 	</body>
 </html>
